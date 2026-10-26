@@ -1,6 +1,6 @@
 import express from 'express';
 import pg from 'pg';
-import Joi, { func } from 'joi';
+import Joi from 'joi';
 
 const app = express();
 const port = 3000;
@@ -38,7 +38,7 @@ app.use((req, res, next) => {
 
 // RESPONSE ENVELOPE
 
-function susccessResponce(res, message, data, status = 200) {
+function susccessResponse(res, message, data, status = 200) {
     return res.status(status).json({
         success: true,
         message,
@@ -59,7 +59,7 @@ function errorResponce(res, message, status, details = null ) {
 //JOI VALIDATION SCHEMA
 
 const biodataSchema = Joi.object({
-    id: Joi.number().integer.positive(),
+    id: Joi.number().integer().positive(),
     nama: Joi.string().trim().min(2).max(100).required(),
     nim: Joi.string().trim().min(5).max(20).required(),
     kelas: Joi.string().trim().min(1).max(20).required(),
@@ -122,7 +122,7 @@ app.get('/', async (req, res) => {
         'SELECT * FROM biodata ORDER BY id'
     )
 
-    return susccessResponce(
+    return susccessResponse(
         res,
         'Data berhasil diambil',
         result.rows
@@ -142,7 +142,7 @@ app.post(
             [id ?? null, nama, nim, kelas]
         )
 
-        return successResponse(
+        return susccessResponse(
             res,
             'Data berhasil ditambahkan',
             result.rows[0],
@@ -176,7 +176,7 @@ app.put(
             )
         }
 
-        return successResponse(
+        return susccessResponse(
             res,
             'Data berhasil diupdate',
             result.rows[0]
@@ -196,12 +196,12 @@ app.delete(
         )
 
         if (result.rowCount === 0) {
-            return errorResponse(
+            return errorResponce(
                 res, 'Data tidak ditemukan', 404
             )
         }
 
-        return successResponse(
+        return susccessResponse(
             res,
             'Data berhasil dihapus',
             result.rows[0]
