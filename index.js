@@ -218,3 +218,19 @@ app.use((req, res) => {
         404
     )
 })
+
+// GLOBAL ERROR HANDLER
+
+app.use((err, req, res, next) => {
+    console.error(err)
+
+    if (res.headerSent){
+        return next(err)
+    }
+
+    return errorResponce(
+        res,
+        'Terjadi kesalahan pada server',
+        500
+    )
+})
